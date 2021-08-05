@@ -69,17 +69,7 @@ def train(opt):
                    "drop_last": False}
 
     all_data = MyDataset(opt.train_set, opt.word2vec_path)
-    # train_size = int(0.75 * len(all_data))
-    #     # test_size = len(all_data) - train_size
-    # training_set, test_set = torch.utils.data.random_split(all_data, [train_size, test_size])
 
-    # training_set, test_set = train_test_split(all_data, test_size=0.85, random_state=42)
-    # training_set = pickle.dumps(training_set)
-    # test_set = pickle.dumps(test_set)
-    # with open(dataset_name + "training_set_15", "ab")as f:
-    #     f.write(training_set)
-    # with open(dataset_name + "test_set_15", "ab")as f:
-    #     f.write(test_set)
 
     f = open(dataset_name + "training_set_10", "rb")
     training_set = pickle.load(f)
