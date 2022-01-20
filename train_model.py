@@ -20,7 +20,6 @@ def train_without_mmd(epoch, model, training_generator, optimizer, criterion, ne
     epoch_auc = 0
     # pgd = PGD(model)
     # K = 1
-    # fgm = FGM(model)
     sample_total = []
     label_total = []
     for itr, (feature, label) in enumerate(training_generator):
@@ -30,12 +29,7 @@ def train_without_mmd(epoch, model, training_generator, optimizer, criterion, ne
         # if need_init:
         #     model._init_hidden_state()
         sence, predictions = model(feature, None, True)
-        xxx = copy.copy(sence).detach().cpu().numpy()
-        yyy = copy.copy(label).detach().cpu().numpy()
-        for i in xxx:
-            sample_total.append(" ".join(str(x) for x in i))
-        for i in yyy:
-            label_total.append(i)
+       
         loss = criterion(predictions + 1e-8, label)
         loss.backward()
         # pgd.backup_grad()
@@ -61,15 +55,6 @@ def train_without_mmd(epoch, model, training_generator, optimizer, criterion, ne
         epoch_precision += val_precision.item()
         epoch_auc += val_auc
 
-    with open('txtfile/sence' + str(epoch + 1) + '.txt', 'w') as f:
-        for i in sample_total:
-            f.write(i)
-            f.write('\r\n')
-
-    with open('txtfile/label' + str(epoch + 1) + '.txt', 'w') as f:
-        for i in label_total:
-            f.write(str(i))
-            f.write('\r\n')
 
     return train_loss / len(training_generator), epoch_acc / len(training_generator), epoch_recall / len(
         training_generator), epoch_f1 / len(
