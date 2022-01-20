@@ -98,20 +98,7 @@ def train_with_mmd(epoch, model, training_generator, training_generator2, optimi
         optimizer.zero_grad()
         # model._init_hidden_state()
         sence, sence2, predictions, predictions2, mmd_loss = model(feature, feature2, True)
-        xxx1 = copy.copy(sence).detach().cpu().numpy()
-        yyy1 = copy.copy(label).detach().cpu().numpy()
-        xxx2 = copy.copy(sence2).detach().cpu().numpy()
-        yyy2 = copy.copy(label2).detach().cpu().numpy()
-        for i in xxx1:
-            sample_total.append(" ".join(str(x) for x in i))
-        for i in yyy1:
-            label_total.append(i)
-        if flag:
-            for i in xxx2:
-                sample_total.append(" ".join(str(x) for x in i))
-            for i in yyy2:
-                label_total.append(i + 2)
-
+       
         loss = criterion(predictions + 1e-8, label)
 
         total_loss = 1 * loss + 0.2 * mmd_loss
@@ -131,15 +118,7 @@ def train_with_mmd(epoch, model, training_generator, training_generator2, optimi
         if (itr + 1) % len(training_generator2) == 0:
             iter2 = iter(training_generator2)
             flag = False
-    with open('do_txtfile/sence' + str(epoch + 1) + '.txt', 'w') as f:
-        for i in sample_total:
-            f.write(i)
-            f.write('\r\n')
-
-    with open('do_txtfile/label' + str(epoch + 1) + '.txt', 'w') as f:
-        for i in label_total:
-            f.write(str(i))
-            f.write('\r\n')
+   
     return train_loss / len(training_generator), total_mmd / len(training_generator), epoch_acc / len(
         training_generator), epoch_recall / len(
         training_generator), epoch_f1 / len(
