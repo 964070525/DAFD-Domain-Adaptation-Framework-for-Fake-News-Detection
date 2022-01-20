@@ -24,16 +24,6 @@ class HierAttNet(nn.Module):
         self.act = nn.Sigmoid()
         # self._init_hidden_state()
 
-    # def _init_hidden_state(self, last_batch_size=None):
-    #     if last_batch_size:
-    #         batch_size = last_batch_size
-    #     else:
-    #         batch_size = self.batch_size
-    #     self.word_hidden_state = torch.zeros(2, batch_size, self.word_hidden_size)
-    #     self.sent_hidden_state = torch.zeros(2, batch_size, self.sent_hidden_size)
-    #
-    #     self.word_hidden_state = self.word_hidden_state.to(device)
-    #     self.sent_hidden_state = self.sent_hidden_state.to(device)
 
     def forward(self, input, input2=None, needoutput=False):
 
