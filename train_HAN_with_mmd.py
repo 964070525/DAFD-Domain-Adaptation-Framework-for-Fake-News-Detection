@@ -96,7 +96,7 @@ def train(opt):
             best_loss = valid_loss
             print(f"save to model with valid_loss = {valid_loss  :.3f}",
                   '    to ' + 'c_g_HAN_15.pth')
-            # torch.save(model, 'c_g_HAN_15.pth')
+            torch.save(model, 'c_g_HAN_15.pth')
         else:
             print(f"is not better than valid_loss =  {best_loss:.3f}")
         print(
