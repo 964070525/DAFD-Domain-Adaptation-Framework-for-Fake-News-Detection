@@ -18,31 +18,30 @@ def train_without_mmd(epoch, model, training_generator, optimizer, criterion, ne
     epoch_f1 = 0
     epoch_precision = 0
     epoch_auc = 0
-    # pgd = PGD(model)
-    # K = 1
+    pgd = PGD(model)
+    K = 3
     sample_total = []
     label_total = []
     for itr, (feature, label) in enumerate(training_generator):
         feature = feature.to(device)
         label = label.to(device)
         optimizer.zero_grad()
-        # if need_init:
-        #     model._init_hidden_state()
+        
         sence, predictions = model(feature, None, True)
        
         loss = criterion(predictions + 1e-8, label)
         loss.backward()
-        # pgd.backup_grad()
-        # for t in range(K):
-        #     pgd.attack(is_first_attack=(t == 0))  # 在embedding上添加对抗扰动, first attack时备份param.data
-        #     if t != K - 1:
-        #         model.zero_grad()
-        #     else:
-        #         pgd.restore_grad()
-        #     predictions1 = model(feature, None)
-        #     loss_adv = criterion(predictions1, label)
-        #     loss_adv.backward()  # 反向传播，并在正常的grad基础上，累加对抗训练的梯度
-        # pgd.restore()  # 恢复embedding参数
+        pgd.backup_grad()
+        for t in range(K):
+            pgd.attack(is_first_attack=(t == 0))  # 在embedding上添加对抗扰动, first attack时备份param.data
+            if t != K - 1:
+                model.zero_grad()
+            else:
+                pgd.restore_grad()
+            predictions1 = model(feature, None)
+            loss_adv = criterion(predictions1, label)
+            loss_adv.backward()  # 反向传播，并在正常的grad基础上，累加对抗训练的梯度
+        pgd.restore()  # 恢复embedding参数
         optimizer.step()
         # 损失和精度
         train_loss += loss.item()
@@ -81,7 +80,7 @@ def train_with_mmd(epoch, model, training_generator, training_generator2, optimi
         feature2 = feature2.to(device)
         label2 = label2.to(device)
         optimizer.zero_grad()
-        # model._init_hidden_state()
+        
         sence, sence2, predictions, predictions2, mmd_loss = model(feature, feature2, True)
        
         loss = criterion(predictions + 1e-8, label)
